@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  db-service:
+    image: mysql:8.0
+    container_name: cereria_mysql
+    restart: always
+    environment:
+      # CORRECCIÓN DE ORO: Le indicamos explícitamente a MySQL que acepte contraseña vacía
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: cereria_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: cereria_phpmyadmin
+    restart: always
+    ports:
+      - "8085:80"  # <-- CAMBIAMOS EL PUERTO A 8085 PARA EVITAR EL CHOQUE
+    environment:
+      - PMA_HOST=db-service
+      - PMA_USER=root
+      - PMA_PASSWORD=
+    depends_on:
+      - db-service
+
+  auth-service:
+    build:
+      context: ./services/auth-api
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - DB_URL=mysql+pymysql://root:@db-service:3306/cereria_db
+    depends_on:
+      - db-service
+
+  rest-service:
+    build:
+      context: ./services/rest-api
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8000"
+    environment:
+      - DB_URL=mysql+pymysql://root:@db-service:3306/cereria_db
+    depends_on:
+      - db-service
+
+  graphql-service:
+    build:
+      context: ./services/graphql-api
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8000"
+    environment:
+      - DB_URL=mysql+pymysql://root:@db-service:3306/cereria_db
+    depends_on:
+      - db-service
+
+volumes:
+  mysql_data:
