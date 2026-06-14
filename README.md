@@ -54,6 +54,8 @@ Tras levantar los contenedores, el API Gateway expone y centraliza los accesos e
 
 Panel Web del Frontend: http://localhost (Puerto default 80)
 
+Dashboard de Traefik: http://localhost:8088
+
 Gestor de Base de Datos (phpMyAdmin): http://localhost:8085
 
 Entorno de Pruebas GraphQL (Strawberry Playground): http://localhost/graphql
