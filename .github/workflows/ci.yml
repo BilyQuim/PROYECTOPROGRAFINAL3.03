@@ -19,10 +19,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd Services
-          pip install -r requirements.txt
+          pip install -r Services/auth-api/requirements.txt
+          pip install -r Services/rest-api/requirements.txt
+          pip install -r Services/graphql-api/requirements.txt
 
       - name: Run Tests
         run: |
-          cd tests
-          python -m unittest discover
+          python -m unittest discover -s tests
