@@ -19,6 +19,34 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install -r Services/auth-api/requirements.txt
+          pip install -r Services/rest-api/requirements.txt
+          pip install -r Services/graphql-api/requirements.txt
+
+      - name: Run Tests
+        run: |
+          python -m unittest discover -s tests
+name: CI Proyecto Final
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
           cd Services
           pip install -r requirements.txt
 
