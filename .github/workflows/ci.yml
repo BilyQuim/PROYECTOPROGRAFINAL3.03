@@ -17,12 +17,23 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install test dependencies
         run: |
-          pip install -r Services/auth-api/requirements.txt
-          pip install -r Services/rest-api/requirements.txt
-          pip install -r Services/graphql-api/requirements.txt
+          python -m pip install --upgrade pip
+          python -m pip install pytest requests
+
+      - name: Start services
+        run: |
+          docker compose up -d --build
+
+      - name: Wait for gateway
+        run: |
+          for path in /auth/docs /rest/docs /graphql; do
+            until curl -fsS "http://localhost${path}" > /dev/null; do
+              sleep 5
+            done
+          done
 
       - name: Run Tests
         run: |
-          python -m unittest discover -s tests
+          python -m pytest tests
